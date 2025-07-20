@@ -146,20 +146,28 @@ public class TabDelimitedReader implements Reader {
             String accounts,
             String amounts
     ) {
-        Set<AccountingEntry> ys = new HashSet<>();
-        String[] as = accounts.split(",");
-        String[] bs = amounts.split(",");
-        for (int i = 0; i < as.length; i++) {
-            ys.add(
-                    // BigDecimal amount, String accountNumber, AccountSide accountSide
+        Set<AccountingEntry> entries = new HashSet<>();
+        String[] accountIds = accounts.split(",");
+        String[] amountStrings = amounts.split(",");
+
+        if (accountIds.length != amountStrings.length) {
+            validationErr(
+                    "mismatch between account ids and amounts",
+                    null,
+                    new String[] {accounts, amounts}
+            );
+        }
+
+        for (int i = 0; i < accountIds.length; i++) {
+            entries.add(
                     new AccountingEntry(
-                            new BigDecimal(bs[i]),
-                            as[i],
+                            new BigDecimal(amountStrings[i].trim()),
+                            accountIds[i].trim(),
                             accountSide
                     )
             );
         }
-        return ys;
+        return entries;
     }
 
     // Convenience function for raising validate errors.
