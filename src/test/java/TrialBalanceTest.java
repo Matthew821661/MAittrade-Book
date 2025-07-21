@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 
 import static core.account.AccountSide.DEBIT;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TrialBalanceTest {
     @Test
@@ -38,5 +39,34 @@ public class TrialBalanceTest {
 
         // Assert
         assertTrue(trialBalance.isBalanced());
+    }
+
+    @Test
+    public void testTrialBalanceReportTotals() {
+        // Arrange
+        String cashAccountNumber = "000001";
+        String checkingAccountNumber = "000002";
+
+        ChartOfAccounts coa = ChartOfAccountsBuilder.create()
+                .addAccount(cashAccountNumber, "Cash", DEBIT)
+                .addAccount(checkingAccountNumber, "Cash", DEBIT)
+                .build();
+        Journal journal = new Journal();
+
+        AccountingTransaction t1 = AccountingTransactionBuilder.create()
+                .debit(new BigDecimal(222), checkingAccountNumber)
+                .credit(new BigDecimal(222), cashAccountNumber)
+                .build();
+        journal.addTransaction(t1);
+        Ledger ledger = new Ledger(journal, coa);
+
+        // Act
+        TrialBalanceResult trialBalance = ledger.computeTrialBalance();
+        var report = trialBalance.toReport();
+
+        // Assert
+        assertTrue(report.isBalanced());
+        assertEquals(new BigDecimal(222), report.getTotalDebit());
+        assertEquals(new BigDecimal(222), report.getTotalCredit());
     }
 }

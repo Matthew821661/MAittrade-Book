@@ -36,6 +36,6 @@ public class Main {
 
         // Print trial balance
         TrialBalanceResult trialBalanceResult = ledger.computeTrialBalance();
-        System.out.println(trialBalanceResult.toString());
+        System.out.println(trialBalanceResult.toReport().toString());
     }
 }

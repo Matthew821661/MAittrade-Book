@@ -25,6 +25,14 @@ public class TrialBalanceResult {
     @Getter
     final private boolean isBalanced;
 
+    public Map<AccountDetails, BigDecimal> getAccountBalances() {
+        return new TreeMap<>(accountDetailsToBalance);
+    }
+
+    public TrialBalanceReport toReport() {
+        return new TrialBalanceReport(accountDetailsToBalance);
+    }
+
     public TrialBalanceResult(Set<Account> accounts) {
         checkNotNull(accounts);
         checkArgument(!accounts.isEmpty());
