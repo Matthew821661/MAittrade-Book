@@ -8,6 +8,8 @@ import core.account.AccountingEntry;
 import core.chartofaccounts.ChartOfAccounts;
 import core.transaction.AccountingTransaction;
 import core.transaction.AccountingTransactionBuilder;
+import core.plugin.LedgerPlugin;
+import java.util.ArrayList;
 import lombok.Getter;
 
 import javax.annotation.Nullable;
@@ -28,6 +30,8 @@ final public class Ledger {
     @Getter
     final private ChartOfAccounts coa;
 
+    private final ArrayList<LedgerPlugin> plugins = new ArrayList<>();
+
     public Ledger(ChartOfAccounts coa) {
         this.coa = coa;
         // Create coa accounts
@@ -40,6 +44,20 @@ final public class Ledger {
         journal.getTransactions().forEach(this::commitTransaction);
     }
 
+    /**
+     * Register a plugin that will receive ledger events.
+     */
+    public void registerPlugin(LedgerPlugin plugin) {
+        plugins.add(plugin);
+    }
+
+    /**
+     * Remove a previously registered plugin.
+     */
+    public void unregisterPlugin(LedgerPlugin plugin) {
+        plugins.remove(plugin);
+    }
+
     public AccountingTransactionBuilder createTransaction(@Nullable Map<String, String> info) {
         return AccountingTransactionBuilder.create(info);
     }
@@ -48,6 +66,10 @@ final public class Ledger {
         // Add entries to accounts
         transaction.getEntries().forEach(this::addAccountEntry);
         journal.addTransaction(transaction);
+        // Notify plugins
+        for (LedgerPlugin plugin : plugins) {
+            plugin.onTransactionCommitted(this, transaction);
+        }
     }
 
     public TrialBalanceResult computeTrialBalance() {
