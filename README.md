@@ -30,6 +30,15 @@ ledger.commitTransaction(t);
 System.out.println(ledger.toString());
 ```
 
+After running the example you can ask the assistant about the ledger. When
+executing the `Main` class you will be prompted for commands. For example:
+
+```
+Ask assistant about ledger (type 'exit' to quit):
+> trial balance
+... output of the computed trial balance ...
+```
+
 ## Setup
 
 Accounting uses [lombok](https://projectlombok.org/) to reduce getter and setter code clutter.

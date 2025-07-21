@@ -3,6 +3,8 @@ import core.TrialBalanceResult;
 import core.chartofaccounts.ChartOfAccounts;
 import core.chartofaccounts.ChartOfAccountsBuilder;
 import core.transaction.AccountingTransaction;
+import assistant.Assistant;
+import java.util.Scanner;
 
 import java.math.BigDecimal;
 
@@ -37,5 +39,18 @@ public class Main {
         // Print trial balance
         TrialBalanceResult trialBalanceResult = ledger.computeTrialBalance();
         System.out.println(trialBalanceResult.toString());
+
+        // Start simple assistant
+        Assistant assistant = new Assistant();
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Ask assistant about ledger (type 'exit' to quit):");
+            while (true) {
+                String line = scanner.nextLine();
+                if ("exit".equalsIgnoreCase(line)) {
+                    break;
+                }
+                System.out.println(assistant.handle(line, ledger));
+            }
+        }
     }
 }
