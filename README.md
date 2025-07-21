@@ -30,6 +30,21 @@ ledger.commitTransaction(t);
 System.out.println(ledger.toString());
 ```
 
+## Web server example
+
+The project now includes a minimal HTTP server using [Spark](http://sparkjava.com/).
+This demonstrates how the library can be exposed via a REST API, which is a first
+step toward running it as a SaaS application.
+
+To start the server run:
+
+```bash
+mvn compile exec:java -Dexec.mainClass=web.AccountingServer
+```
+
+This launches an in-memory ledger service on port `4567` with endpoints for
+creating ledgers, adding accounts and posting transactions.
+
 ## Setup
 
 Accounting uses [lombok](https://projectlombok.org/) to reduce getter and setter code clutter.
